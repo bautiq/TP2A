@@ -14,12 +14,9 @@ client.connect(err => {
 
     runCrud(collectionInventors);
 
-  } else {
+    } else {
     console.log(chalk.red('error in connection, code:' + err.code))
-}
-  
-  console.log(chalk.blue('Closing connection, bye'));
-  
+  } 
 });
 
 async function runCrud(collectionInventors){
@@ -60,6 +57,7 @@ async function runCrud(collectionInventors){
       });
 
       client.close();
+      console.log(chalk.blue('Closing connection, bye'));
 }
    
 
