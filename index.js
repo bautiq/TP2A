@@ -4,67 +4,68 @@ const uri = 'mongodb+srv://bauti:asd123@clusterbautitp-bp5ff.mongodb.net/test?re
 const client = new MongoClient(uri, { useNewUrlParser: true });
 
 
-    client.connect(err => {
-        if (err == null || err == undefined) {
-          console.log(chalk.green('connected and performing task'));
 
-          const database = client.db('desafio2db');
-          const collectionInventors = database.collection('inventors');
+client.connect(err => {
+  if (err == null || err == undefined) {
+    console.log(chalk.green('connected and performing task'));
 
-          const inventor = {first: 'Leonardo', last: 'Da Vinci', year:1452};
+    const database = client.db('desafio2db');
+    const collectionInventors = database.collection('inventors');
 
-          /*
-         showInventors(collectionInventors) .then(()=> {
-            console.log(chalk.green('Finished showing inventors'));
-          })
+    runCrud(collectionInventors);
 
-          .catch((error)=>{
-            console.log(chalk.red('Failed when showing investors' + error));
-          });*/
+  } else {
+    console.log(chalk.red('error in connection, code:' + err.code))
+}
+  
+  console.log(chalk.blue('Closing connection, bye'));
+  
+});
 
-        /*
-        insertInventor(collectionInventors, inventor).then(()=> {
-            console.log(chalk.green('Finished inserting inventor'));
-        })
-          
-          .catch((error)=>{
-            console.log(chalk.red('Failed when inserting inventor' + error));
-          });*/
+async function runCrud(collectionInventors){
 
-        /*
-        updateInventor(collectionInventors, inventor, {$set:{death: 1519}}).then(()=> {
-            console.log(chalk.green('Finished updating inventor'));
-        })
-          
-          .catch((error)=>{
-            console.log(chalk.red('Failed when updating inventor' + error));
-          });*/
-        
+      const inventor = {first: 'Leonardo', last: 'Da Vinci', year:1452};
 
-        /*
-        deleteInventor(collectionInventors, {first: 'Leonardo', year: 1452}).then(()=> {
-             console.log(chalk.green('Finished deleting inventor'));
-        })
-        
-        .catch((error)=>{
-            console.log(chalk.red('Failed when deleting inventor' + error));
-          });
-         
-      } else {
-          console.log(chalk.red('error in connection, code:' + err.code))
-      }*/
-        
-        console.log(chalk.blue('Closing connection, bye'));
-        client.close();
+      await insertInventor(collectionInventors, inventor).then(()=> {
+        console.log(chalk.green('Finished inserting inventor'));
+    })
+     .catch((error)=>{
+        console.log(chalk.red('Failed when inserting inventor' + error));
+      });
+      
+      await showInventors(collectionInventors) .then(()=> {
+        console.log(chalk.green('Finished showing inventors'));
+      })
+
+      .catch((error)=>{
+        console.log(chalk.red('Failed when showing investors' + error));
       });
 
 
+      await updateInventor(collectionInventors, inventor, {$set:{death: 1519}}).then(()=> {
+        console.log(chalk.green('Finished updating inventor'));
+    })
+      
+      .catch((error)=>{
+        console.log(chalk.red('Failed when updating inventor' + error));
+      });
+    
+    
+      await deleteInventor(collectionInventors, {first: 'Leonardo', year: 1452}).then(()=> {
+         console.log(chalk.green('Finished deleting inventor'));
+    })
+    
+    .catch((error)=>{
+        console.log(chalk.red('Failed when deleting inventor' + error));
+      });
 
+      client.close();
+}
+   
 
+function showInventors(collection) {
 
-const showInventors = async function(collection) {
-
-    new Promise((resolve) => {
+    return new Promise((resolve) => {
         resolve(collection.find().toArray((err, result) => {
             console.log(result);
         }));
@@ -72,30 +73,31 @@ const showInventors = async function(collection) {
     
 }
 
-const insertInventor = async function(collection, newInventor) {
-    new Promise((resolve) => {
+function insertInventor(collection, newInventor) {
+    return new Promise((resolve) => {
         resolve(collection.insertOne(newInventor));
     });
     
 }
 
-const updateInventor = async function(collection,inventor, update) {
-    new Promise((resolve) => {
+function updateInventor(collection,inventor, update) {
+    return new Promise((resolve) => {
         resolve(collection.updateOne(inventor, update));
     });
 }
 
 
 
-const deleteInventor = async function(collection, inventor) {
+ function deleteInventor(collection, inventor) {
 
-    new Promise((resolve) => {
+    return new Promise((resolve) => {
         resolve(collection.deleteOne(inventor));
     });
     
 }
 
-async function populateInventors(){
+
+function populateInventors(){
     const database = client.db('desafio2db');
     const collectionInventors = database.collection('inventors');
     collectionInventors.insertMany([
